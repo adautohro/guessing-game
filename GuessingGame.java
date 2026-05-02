@@ -24,8 +24,8 @@ public class GuessingGame {
                 3. Hard (3 chances)
                                 """);
 
-        try (Scanner scanner = new Scanner(System.in)) {
-            final Integer difficultyIndex = InputValidator.validate(scanner,
+        try (Scanner inputReader = new Scanner(System.in)) {
+            final Integer difficultyIndex = InputValidator.validate(inputReader,
                     Integer::parseInt,
                     n -> n >= 1 && n <= 3,
                     "Enter your choice: ",
@@ -47,16 +47,15 @@ public class GuessingGame {
 
             System.out.printf("""
                     Great! You have selected the %s difficulty level.
-                    You have %d chances to guess the correct number.
                     Let's start the game!
                         """, difficultyLevel.get(difficultyIndex), chances);
 
             // Game Loop
             boolean wantReplay = false;
             do {
-                startGame(chances, scanner);
+                startGame(chances, inputReader);
                 System.out.print("Replay? (y or n): ");
-                final String answer = scanner.nextLine();
+                final String answer = inputReader.nextLine();
                 wantReplay = switch (answer.toLowerCase()) {
                     case "y", "yes" -> true;
                     default -> false;
@@ -69,8 +68,9 @@ public class GuessingGame {
 
     private static void startGame(final int chances, final Scanner input) {
         final int number = new Random().nextInt(1, 100 + 1);
-        for (int attempts = 1; attempts <= chances; attempts++) {
-            System.out.println();
+        for (int attempts = 0; attempts < chances; attempts++) {
+            System.out.printf("You have %d " + ((chances - attempts == 1) ? "attempt" : "attempts") + "\n\n",
+                    chances - attempts);
 
             final Integer guess = InputValidator.validate(
                     input,
@@ -84,7 +84,8 @@ public class GuessingGame {
             } else if (number > guess) {
                 System.out.println("Incorrect! The number is greater than " + guess);
             } else {
-                System.out.printf("Congratulations! You guessed the correct number in %d attempts\n", attempts);
+                System.out.printf("Congratulations! You guessed the correct number in %d attempts\n",
+                        chances - attempts);
                 return;
             }
 
@@ -96,23 +97,26 @@ public class GuessingGame {
      * InputValidator
      */
     private final static class InputValidator {
-        public static <T> T validate(final Scanner inputReader, final Function<String, T> parser, final Predicate<T> validation,
+        public static <T> T validate(final Scanner inputReader, final Function<String, T> parser,
+                final Predicate<T> validation,
                 final String inputMessage, final String errorMessage) {
 
-            System.out.print(inputMessage);
-            final String input = inputReader.nextLine();
+            while (true) {
+                System.out.print(inputMessage);
+                final String input = inputReader.nextLine();
 
-            try {
-                final T value = parser.apply(input);
-                if (!validation.test(value)) {
+                try {
+                    final T value = parser.apply(input);
+                    if (!validation.test(value)) {
+                        System.out.println(errorMessage);
+                        continue;
+                    }
+
+                    return value;
+                } catch (final RuntimeException e) {
                     System.out.println(errorMessage);
-                    return validate(inputReader, parser, validation, inputMessage, errorMessage);
+                    continue;
                 }
-
-                return value;
-            } catch (final Exception e) {
-                System.out.println(errorMessage);
-                return validate(inputReader, parser, validation, inputMessage, errorMessage);
             }
 
         }
