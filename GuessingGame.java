@@ -62,9 +62,9 @@ public class GuessingGame {
 
     private static void startGame(final int chances, final Scanner input) {
         final int number = new Random().nextInt(1, 100 + 1);
-        for (int attempts = 0; attempts < chances; attempts++) {
-            System.out.printf("You have %d " + ((chances - attempts == 1) ? "attempt" : "attempts") + "\n\n",
-                    chances - attempts);
+        for (int attempts = 1; attempts <= chances  ; attempts++) {
+            System.out.printf("You have %d " + ((chances - attempts == 0) ? "attempt" : "attempts") + "\n\n",
+                    chances - attempts + 1);
 
             final Integer guess = InputValidator.validate(
                     input,
@@ -79,7 +79,7 @@ public class GuessingGame {
                 System.out.println("Incorrect! The number is greater than " + guess);
             } else {
                 System.out.printf("Congratulations! You guessed the correct number in %d attempts\n",
-                        chances - attempts);
+                        attempts);
                 return;
             }
 
