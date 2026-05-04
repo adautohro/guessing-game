@@ -1,4 +1,3 @@
-import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.function.Function;
@@ -31,29 +30,24 @@ public class GuessingGame {
                     "Enter your choice: ",
                     "Invalid difficulty level! Please type a number between 1 and 3.\n");
 
-            final int chances = switch (difficultyIndex) {
-                case 1 -> 10;
-                case 2 -> 5;
-                case 3 -> 3;
+            final Difficulty difficultyLevel = switch (difficultyIndex) {
+                case 1 -> Difficulty.EASY;
+                case 2 -> Difficulty.MEDIUM;
+                case 3 -> Difficulty.HARD;
                 default ->
                     throw new IllegalArgumentException(
                             "Invalid difficulty level! Please type a number between 1 and 3.");
             };
 
-            final var difficultyLevel = new HashMap<Integer, String>();
-            difficultyLevel.put(1, "Easy");
-            difficultyLevel.put(2, "Medium");
-            difficultyLevel.put(3, "Hard");
-
             System.out.printf("""
                     Great! You have selected the %s difficulty level.
                     Let's start the game!
-                        """, difficultyLevel.get(difficultyIndex), chances);
+                        """, difficultyLevel.getText(), difficultyLevel.getChances());
 
             // Game Loop
             boolean wantReplay = false;
             do {
-                startGame(chances, inputReader);
+                startGame(difficultyLevel.getChances(), inputReader);
                 System.out.print("Replay? (y or n): ");
                 final String answer = inputReader.nextLine();
                 wantReplay = switch (answer.toLowerCase()) {
@@ -91,6 +85,29 @@ public class GuessingGame {
 
         }
         System.out.println("Out of attemps! The number was " + number);
+    }
+
+    private enum Difficulty {
+        EASY("Easy", 10), MEDIUM("Medium", 5), HARD("Hard", 3),
+        ;
+
+        public String getText() {
+            return text;
+        }
+
+        public int getChances() {
+            return chances;
+        }
+
+        private final String text;
+        private final int chances;
+
+        private Difficulty(final String text, final int chances) {
+
+            this.text = text;
+            this.chances = chances;
+        }
+
     }
 
     /**
