@@ -87,6 +87,9 @@ public class GuessingGame {
         System.out.println("Out of attemps! The number was " + number);
     }
 
+    /**
+     * Difficulty
+     */
     private static enum Difficulty {
         EASY("Easy", 10), MEDIUM("Medium", 5), HARD("Hard", 3),
         ;
