@@ -30,10 +30,10 @@ public class GuessingGame {
                     "Enter your choice: ",
                     "Invalid difficulty level! Please type a number between 1 and 3.\n");
 
-            final Difficulty difficultyLevel = switch (difficultyIndex) {
-                case 1 -> Difficulty.EASY;
-                case 2 -> Difficulty.MEDIUM;
-                case 3 -> Difficulty.HARD;
+            final GameConfig.Difficulty difficultyLevel = switch (difficultyIndex) {
+                case 1 -> GameConfig.Difficulty.EASY;
+                case 2 -> GameConfig.Difficulty.MEDIUM;
+                case 3 -> GameConfig.Difficulty.HARD;
                 default ->
                     throw new IllegalArgumentException(
                             "Invalid difficulty level! Please type a number between 1 and 3.");
@@ -47,7 +47,7 @@ public class GuessingGame {
             // Game Loop
             boolean wantReplay = false;
             do {
-                startGame(difficultyLevel.getChances(), inputReader);
+                startGame(difficultyLevel, inputReader);
                 System.out.print("Replay? (y or n): ");
                 final String answer = inputReader.nextLine();
                 wantReplay = switch (answer.toLowerCase()) {
@@ -60,9 +60,17 @@ public class GuessingGame {
         }
     }
 
-    private static void startGame(final int chances, final Scanner input) {
+    private static void startGame(final GameConfig.Difficulty difficulty, final Scanner input) {
         final int number = new Random().nextInt(1, 100 + 1);
         HintGenerator hintGenerator = new HintGenerator(number);
+        HighScore highscore = HighScore.read();
+        final int chances = difficulty.getChances();
+
+        if (highscore.getHighscore(difficulty) != null) {
+            System.out.printf("Your current highscore for this difficulty is %d attempt(s)\n",
+                    highscore.getHighscore(difficulty));
+            System.out.println();
+        }
 
         for (int attempts = 1; attempts <= chances; attempts++) {
             System.out.printf("You have %d " + ((chances - attempts == 0) ? "attempt" : "attempts") + "\n\n",
@@ -82,6 +90,10 @@ public class GuessingGame {
             } else {
                 System.out.printf("Congratulations! You guessed the correct number in %d attempts\n",
                         attempts);
+
+                if (highscore.getHighscore(difficulty) == null || attempts < highscore.getHighscore(difficulty)) {
+                    highscore.register(difficulty, attempts);
+                }
                 return;
             }
 
@@ -91,32 +103,6 @@ public class GuessingGame {
 
         }
         System.out.println("Out of attemps! The number was " + number);
-    }
-
-    /**
-     * Difficulty
-     */
-    private static enum Difficulty {
-        EASY("Easy", 10), MEDIUM("Medium", 5), HARD("Hard", 3),
-        ;
-
-        public String getText() {
-            return text;
-        }
-
-        public int getChances() {
-            return chances;
-        }
-
-        private final String text;
-        private final int chances;
-
-        private Difficulty(final String text, final int chances) {
-
-            this.text = text;
-            this.chances = chances;
-        }
-
     }
 
     /**
