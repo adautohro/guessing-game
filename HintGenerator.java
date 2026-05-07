@@ -7,6 +7,7 @@ import java.util.Random;
  */
 public final class HintGenerator {
     private final List<String> hints;
+    private static final Random random = new Random();
 
     public HintGenerator(final int number) {
         if (number < 1 || number > 100) {
@@ -27,7 +28,6 @@ public final class HintGenerator {
     }
 
     public String getHint() {
-        final Random random = new Random();
         final int index = random.nextInt(0, hints.size());
         return hints.remove(index);
     }

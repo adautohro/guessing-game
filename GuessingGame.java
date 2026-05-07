@@ -42,7 +42,7 @@ public class GuessingGame {
             System.out.printf("""
                     Great! You have selected the %s difficulty level.
                     Let's start the game!
-                        """, difficultyLevel.getText(), difficultyLevel.getChances());
+                        """, difficultyLevel.getText());
 
             // Game Loop
             boolean wantReplay = false;
@@ -73,7 +73,7 @@ public class GuessingGame {
         }
 
         for (int attempts = 1; attempts <= chances; attempts++) {
-            System.out.printf("You have %d " + ((chances - attempts == 0) ? "attempt" : "attempts") + "\n\n",
+            System.out.printf("You have %d attempt(s)\n\n",
                     chances - attempts + 1);
 
             final Integer guess = InputValidator.validate(

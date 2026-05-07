@@ -19,7 +19,7 @@ public class HighScore implements Serializable {
 
     public static HighScore read() {
         if (Files.notExists(Path.of(PATH))) {
-            return init();
+            return new HighScore();
         }
 
         HighScore highscore = null;
@@ -47,11 +47,4 @@ public class HighScore implements Serializable {
         return highscores.get(difficulty);
     }
 
-    private static HighScore init() {
-        var highscore = new HighScore();
-        highscore.highscores.put(GameConfig.Difficulty.EASY, null);
-        highscore.highscores.put(GameConfig.Difficulty.MEDIUM, null);
-        highscore.highscores.put(GameConfig.Difficulty.HARD, null);
-        return highscore;
-    }
 }
