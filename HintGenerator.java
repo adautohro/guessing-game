@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -27,8 +28,15 @@ public final class HintGenerator {
 
     }
 
-    public String getHint() {
-        final int index = random.nextInt(0, hints.size());
-        return hints.remove(index);
+    public Optional<String> getHint() {
+        Optional<String> hint;
+        if (hints.size() > 0) {
+            final int index = random.nextInt(0, hints.size());
+            hint = Optional.of(hints.remove(index));
+        } else {
+            hint = Optional.empty();
+        }
+
+        return hint;
     }
 }

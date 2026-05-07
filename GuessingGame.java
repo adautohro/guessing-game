@@ -98,7 +98,7 @@ public class GuessingGame {
             }
 
             if ((attempts % 3) == 0) {
-                System.out.println("Hint: " + hintGenerator.getHint());
+                hintGenerator.getHint().ifPresent(h -> System.out.println("Hint: " + h));
             }
 
         }
